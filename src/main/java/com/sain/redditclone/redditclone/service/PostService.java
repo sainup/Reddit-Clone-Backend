@@ -60,6 +60,7 @@ public class PostService {
     @Transactional(readOnly = true)
     public List<PostResponse> getAllPosts() {
 
+
         return postRepository.findAll()
                 .stream()
                 .map(postMapper::mapToDto)

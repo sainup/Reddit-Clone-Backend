@@ -14,6 +14,8 @@ import com.sain.redditclone.redditclone.repository.UserRepository;
 import com.sain.redditclone.redditclone.repository.VerificationTokenRepository;
 import com.sain.redditclone.redditclone.security.JwtProvider;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -28,6 +30,7 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class AuthService {
 
 
@@ -71,11 +74,14 @@ public class AuthService {
 
     @Transactional(readOnly = true)
     public User getCurrentUser() {
+        log.warn("BEFORE FINDING THE USERNAME ");
         org.springframework.security.core.userdetails.User principal =
                 (org.springframework.security.core.userdetails.User) SecurityContextHolder
                         .getContext()
                         .getAuthentication()
                         .getPrincipal();
+        log.warn("AFTER FINDING THE USERNAME ");
+        log.info("AUTH SERVICE USER : " + principal.getUsername());
         return userRepository.findByUsername(principal.getUsername())
                 .orElseThrow(() -> new SpringRedditException("User not found with name : " + principal.getUsername()));
     }
@@ -123,4 +129,8 @@ public class AuthService {
     }
 
 
+    public boolean isLoggedIn() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return !(authentication instanceof AnonymousAuthenticationToken) && authentication.isAuthenticated();
+    }
 }

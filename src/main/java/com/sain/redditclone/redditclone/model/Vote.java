@@ -16,8 +16,8 @@ import javax.validation.constraints.NotNull;
 public class Vote {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long votedId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long voteId;
 
     private VoteType voteType;
     @NotNull
